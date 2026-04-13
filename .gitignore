@@ -1,119 +1,19 @@
-#############################
-# Java / Spring Boot project
-#############################
-
-# Compiled class files
+# Java y Maven
+target/
 *.class
-
-# Log files
-*.log
-
-# BlueJ / VSCode / NetBeans / IntelliJ / Eclipse junk
-*.ctxt
-*.iml
-.idea/
-.vscode/
-.nb-gradle/
-nbproject/private/
-out/
-target/
-bin/
-build/
-
-# Maven target directory
-target/
-
-# Spring Boot specific
-*.war
 *.jar
+*.war
 *.ear
 
-# Temporary files
-*.tmp
-*.bak
-*.swp
-*~$
-
-#############################
-# H2 Database (archivo local)
-#############################
-/data/
-*.mv.db
-*.trace.db
-
-#############################
-# OS / Environment specific
-#############################
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-
-# Linux
-*~
-
-#############################
-# IDE settings and metadata
-#############################
-
-# Eclipse
-.project
-.classpath
-.settings/
-.metadata/
-.recommenders/
-
-# IntelliJ IDEA
-*.iws
-*.ipr
-.idea/
-
-# NetBeans
-nbactions.xml
-nb-configuration.xml
-
-# VS Code
+# Configuración de VS Code e IDEs
 .vscode/
+.idea/
+*.iml
+.settings/
+.classpath
+.project
 
-#############################
-# Environment and credentials
-#############################
-.env
-*.env
-*.key
-*.pem
-*.p12
-*.crt
-*.der
-*.jks
-*.keystore
-
-#############################
-# OS generated files
-#############################
-*.swp
-*.swo
-*.bak
-*.tmp
-*.orig
-
-#############################
-# Reports and temporary outputs
-#############################
-/logs/
-/tmp/
-/test-output/
-/surefire-reports/
-/jacoco.exec
-
-#############################
-# Ignore node_modules if you add a frontend later
-#############################
-node_modules/
-dist/
+# Archivos temporales y logs
+*.log
+.DS_Store
+temp/

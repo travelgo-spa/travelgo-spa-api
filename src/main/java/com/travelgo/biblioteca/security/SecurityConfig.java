@@ -14,31 +14,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        http
-            .csrf(AbstractHttpConfigurer::disable)              //  CSRF off (clave para POST)
-            .cors(Customizer.withDefaults())
-            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                //  Permitir login (POST) explícito
-                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                //  Permitir todo /auth por si agregas register/me/etc
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/error").permitAll()
-                //  Paquetes visibles sin token
-                .requestMatchers(HttpMethod.GET, "/api/packages/**").permitAll()
-
-                // Swagger + H2
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/doc/**", "/h2-console/**").permitAll()
-
-                .anyRequest().authenticated()
-            )
-            .headers(h -> h.frameOptions(f -> f.disable()))
-            .formLogin(AbstractHttpConfigurer::disable)         //  sin /login
-            .httpBasic(AbstractHttpConfigurer::disable);
-
-        return http.build();
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.csrf(csrf -> csrf.disable()) // Ayuda a postman a realizar POST y PUT 
+        .authorizeHttpRequests(auth -> auth
+            .anyRequest().permitAll() // Permite todo el tráfico sin autenticación
+        )
+        .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+    return http.build();
     }
 }

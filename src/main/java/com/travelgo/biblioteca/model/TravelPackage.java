@@ -1,36 +1,21 @@
-package com.travelgo.biblioteca.model;
+package com.travelgo.biblioteca.model; // Coincide con la carpeta 'model'
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.Data;
-
-import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
-@Table(name = "packages")
 @Data
 public class TravelPackage {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank
-    private String name;          // Nombre del paquete
-
-    @NotBlank
-    private String destination;   // Destino principal
-
-    @Min(1)
-    private Integer durationDays; // Duración en días
-
-    private String category;      // Categoría del paquete
-
-    @Min(0)
-    private Integer stock;        // Cupos disponibles
-
-    @DecimalMin(value = "0.0", inclusive = true)
-    private BigDecimal price;     // Precio
-
-    private String imageUrl;      // URL de la imagen
+    
+    private String name;
+    private String description;
+    private Double price;
+    private Integer durationDays;
+    
+    @ElementCollection
+    private List<String> destinations; 
 }
