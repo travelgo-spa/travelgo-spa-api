@@ -1,8 +1,0 @@
-MERGE INTO PACKAGES (ID, CATEGORY, DESTINATION, DURATION_DAYS, IMAGE_URL, NAME, PRICE, STOCK) KEY(ID) VALUES
-(1,'Nacional','Patagonia',5,'https://images.unsplash.com/photo-1544989164-31dc3c645987','Torres del Paine 5D/4N',350000.00,20);
-
-MERGE INTO PACKAGES (ID, CATEGORY, DESTINATION, DURATION_DAYS, IMAGE_URL, NAME, PRICE, STOCK) KEY(ID) VALUES
-(2,'Internacional','Caribe',7,'https://images.unsplash.com/photo-1507525428034-b723cf961d3e','Caribe All-Inclusive 7D/6N',899000.00,15);
-
-MERGE INTO PACKAGES (ID, CATEGORY, DESTINATION, DURATION_DAYS, IMAGE_URL, NAME, PRICE, STOCK) KEY(ID) VALUES
-(3,'Internacional','Europa',10,'https://imgur.com/0DzHZDi.jpeg','Europa Clásica 10D/9N',1499000.00,10);
