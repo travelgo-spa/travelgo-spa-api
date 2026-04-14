@@ -11,7 +11,7 @@
 3. Dale a "Run" en `BibliotecaApplication.java`.
 4. El servidor levantará en el puerto `8081`.
 
-### 🔍 Endpoints principales
+###  Endpoints principales
 * `GET /api/packages`: Para ver todos los tours disponibles.
 * `POST /api/users`: Para registrar un nuevo cliente.
 * `GET /h2-console`: Para ver la base de datos
