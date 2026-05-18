@@ -2,6 +2,8 @@ package com.travelgo.biblioteca;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 public class BibliotecaApplication {
@@ -10,4 +12,9 @@ public class BibliotecaApplication {
 		SpringApplication.run(BibliotecaApplication.class, args);
 	}
 
+	
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
 }

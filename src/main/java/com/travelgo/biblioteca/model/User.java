@@ -1,20 +1,19 @@
 package com.travelgo.biblioteca.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Table(name = "app_users") // Evita conflicto con la tabla 'user' de H2
-@Data // Para getters y setters automaticamente
-@AllArgsConstructor
+@Table(name = "app_users") 
+@Data 
+@AllArgsConstructor 
+@NoArgsConstructor 
 public class User {
+    
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
+    private Long id; 
+    
     private String username;
     private String email;
 }
