@@ -1,5 +1,6 @@
 package com.travelgo.biblioteca.service.impl;
 
+import com.travelgo.biblioteca.Client.UserServiceClient;
 import com.travelgo.biblioteca.exception.BusinessException;
 import com.travelgo.biblioteca.exception.NotFoundException;
 import com.travelgo.biblioteca.model.Reservation;
@@ -7,22 +8,11 @@ import com.travelgo.biblioteca.repository.ReservationRepository;
 import com.travelgo.biblioteca.service.ReservationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-/**
- * Lógica de negocio para Reservas.
- *
- * Comunicación inter-servicio:
- *   Antes de crear una reserva, consulta al travelgo-user-service
- *   en GET /api/users/check/{userId} para verificar que el usuario existe.
- *   Si el servicio no responde, se propaga ResourceAccessException
- *   que el GlobalExceptionHandler convierte en 503.
- */
 @Service
 @Transactional
 public class ReservationServiceImpl implements ReservationService {
@@ -30,16 +20,12 @@ public class ReservationServiceImpl implements ReservationService {
     private static final Logger log = LoggerFactory.getLogger(ReservationServiceImpl.class);
 
     private final ReservationRepository repo;
-    private final RestTemplate restTemplate;
-    private final String userServiceBaseUrl;
+    private final UserServiceClient userServiceClient;
 
-    public ReservationServiceImpl(
-            ReservationRepository repo,
-            RestTemplate restTemplate,
-            @Value("${userservice.base-url}") String userServiceBaseUrl) {
+    public ReservationServiceImpl(ReservationRepository repo,
+                                  UserServiceClient userServiceClient) {
         this.repo = repo;
-        this.restTemplate = restTemplate;
-        this.userServiceBaseUrl = userServiceBaseUrl;
+        this.userServiceClient = userServiceClient;
     }
 
     @Override
@@ -64,14 +50,11 @@ public class ReservationServiceImpl implements ReservationService {
         log.info("Intentando crear reserva para userId={}, packageId={}",
                 reservation.getUserId(), reservation.getPackageId());
 
-        // -------------------------------------------------------
-        // Comunicación inter-servicio: verificar usuario en user-service
-        // ResourceAccessException si el servicio está caído → 503 vía GlobalExceptionHandler
-        // -------------------------------------------------------
-        String checkUrl = userServiceBaseUrl + "/api/users/check/" + reservation.getUserId();
-        log.debug("Consultando existencia de usuario en: {}", checkUrl);
 
-        Boolean userExists = restTemplate.getForObject(checkUrl, Boolean.class);
+        log.debug("Verificando existencia de usuario id={} en user-service via Feign",
+                reservation.getUserId());
+
+        Boolean userExists = userServiceClient.checkUserExists(reservation.getUserId());
 
         if (Boolean.FALSE.equals(userExists)) {
             log.warn("Reserva rechazada: usuario id={} no existe en user-service",
