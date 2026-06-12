@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public User findById(Long id) {
+    public User findById(Integer id) {
         log.debug("Buscando usuario con id: {}", id);
         return repo.findById(id)
                 .orElseThrow(() -> {
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean existsById(Long id) {
+    public boolean existsById(Integer id) {
         boolean exists = repo.existsById(id);
         log.debug("¿Existe usuario con id {}? -> {}", id, exists);
         return exists;
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Integer id) {
         log.info("Eliminando usuario con id: {}", id);
         findById(id); // Verifica que existe antes de borrar
         repo.deleteById(id);

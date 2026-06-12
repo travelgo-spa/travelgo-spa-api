@@ -17,7 +17,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @NotBlank(message = "El username es obligatorio")
     @Size(min = 3, max = 50, message = "El username debe tener entre 3 y 50 caracteres")

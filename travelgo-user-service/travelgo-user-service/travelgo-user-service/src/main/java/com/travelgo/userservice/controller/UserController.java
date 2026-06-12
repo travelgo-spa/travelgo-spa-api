@@ -24,7 +24,7 @@ public class UserController {
         if (repo.count() == 0) {
             repo.save(new User(null, "italo_camp", "italo@travelgo.cl", "Ítalo Campodónico"));
             repo.save(new User(null, "robert_prof", "roberto@duoc.cl", "Roberto Profesor"));
-            repo.save(new User(null, "m_campodonico", "marcella@gmail.com", "Marcella Campodonico"));
+            repo.save(new User(null, "felipedeg", "fe.degoyeneche@duocuc.cl", "Marcella Campodonico"));
             repo.save(new User(null, "user_test", "test@travelgo.cl", "Usuario de Pruebas"));
             repo.save(new User(null, "admin_travel", "admin@travelgo.cl", "Administrador Global"));
         }

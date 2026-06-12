@@ -34,14 +34,14 @@ public class UserController {
 
     
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable Long id) {
+    public ResponseEntity<User> getById(@PathVariable Integer id) {
         log.debug("GET /api/users/{}", id);
         return ResponseEntity.ok(service.findById(id));
     }
 
     
     @GetMapping("/check/{id}")
-    public ResponseEntity<Boolean> checkExists(@PathVariable Long id) {
+    public ResponseEntity<Boolean> checkExists(@PathVariable Integer id) {
         log.debug("GET /api/users/check/{} - verificando existencia", id);
         boolean exists = service.existsById(id);
         log.info("Verificación de usuario id={}: existe={}", id, exists);
@@ -58,7 +58,7 @@ public class UserController {
 
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         log.info("DELETE /api/users/{}", id);
         service.delete(id);
         return ResponseEntity.noContent().build(); // 204 No Content
