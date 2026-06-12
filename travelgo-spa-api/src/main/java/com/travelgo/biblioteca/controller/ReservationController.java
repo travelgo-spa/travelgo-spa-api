@@ -2,6 +2,8 @@ package com.travelgo.biblioteca.controller;
 
 import com.travelgo.biblioteca.model.Reservation;
 import com.travelgo.biblioteca.service.ReservationService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/reservations")
 @CrossOrigin(origins = "*")
+@Tag(name = "Reservas", description = "Gestión de reservas de paquetes turísticos")
+
 public class ReservationController {
 
     private static final Logger log = LoggerFactory.getLogger(ReservationController.class);

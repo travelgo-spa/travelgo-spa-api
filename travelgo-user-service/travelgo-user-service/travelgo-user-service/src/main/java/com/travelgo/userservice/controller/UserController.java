@@ -1,5 +1,5 @@
 package com.travelgo.userservice.controller;
-
+import io.swagger.v3.oas.annotations.tags.Tag;
 import com.travelgo.userservice.model.User;
 import com.travelgo.userservice.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +10,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "*")
+@Tag(name = "Usuarios", description = "Endpoints básicos de usuarios")
 public class UserController {
-
     private final UserRepository repo;
 
     public UserController(UserRepository repo) {

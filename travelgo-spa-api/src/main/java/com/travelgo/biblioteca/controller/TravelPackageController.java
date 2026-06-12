@@ -2,18 +2,22 @@ package com.travelgo.biblioteca.controller;
 
 import com.travelgo.biblioteca.model.TravelPackage;
 import com.travelgo.biblioteca.service.TravelPackageService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+ 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/packages")
 @CrossOrigin(origins = "*")
+@Tag(name = "Paquetes turísticos", description = "Gestión de paquetes de viaje disponibles")
+
 public class TravelPackageController {
 
     private static final Logger log = LoggerFactory.getLogger(TravelPackageController.class);
