@@ -18,15 +18,15 @@ public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @NotNull(message = "El ID de usuario es obligatorio")
     @Positive(message = "El ID de usuario debe ser un número positivo")
-    private Long userId;
+    private Integer userId;
 
     @NotNull(message = "El ID del paquete es obligatorio")
     @Positive(message = "El ID del paquete debe ser un número positivo")
-    private Long packageId;
+    private Integer packageId;
 
     @NotBlank(message = "La fecha de la reserva es obligatoria")
     @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}",
