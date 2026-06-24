@@ -2,7 +2,6 @@ package com.travelgo.biblioteca.controller;
 
 import com.travelgo.biblioteca.model.TravelPackage;
 import com.travelgo.biblioteca.service.TravelPackageService;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ import java.util.List;
 @RequestMapping("/api/packages")
 @CrossOrigin(origins = "*")
 @Tag(name = "Paquetes turísticos", description = "Gestión de paquetes de viaje disponibles")
-
 public class TravelPackageController {
 
     private static final Logger log = LoggerFactory.getLogger(TravelPackageController.class);

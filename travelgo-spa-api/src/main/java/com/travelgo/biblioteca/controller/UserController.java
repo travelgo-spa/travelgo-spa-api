@@ -2,7 +2,6 @@ package com.travelgo.biblioteca.controller;
 
 import com.travelgo.biblioteca.model.User;
 import com.travelgo.biblioteca.service.UserService;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -16,10 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "*")
-@Tag(
-    name = "Usuarios",
-    description = "Endpoints para listar, buscar, crear y eliminar usuarios"
-)
+@Tag(name = "Usuarios", description = "Gestión de usuarios del sistema")
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);

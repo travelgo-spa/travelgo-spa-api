@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "BibliotecaApplication",
+            "request": "launch",
+            "mainClass": "com.travelgo.biblioteca.BibliotecaApplication",
+            "projectName": "travelgo-spa-api"
+        },
+        {
+            "type": "java",
             "name": "Spring Boot-BibliotecaApplication<biblioteca>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
