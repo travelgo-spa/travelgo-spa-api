@@ -2,6 +2,9 @@ package com.travelgo.biblioteca.controller;
 
 import com.travelgo.biblioteca.model.Reservation;
 import com.travelgo.biblioteca.service.ReservationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -27,6 +30,8 @@ public class ReservationController {
     }
 
     
+    @Operation(summary = "Listar reservas")
+    @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
     @GetMapping
     public ResponseEntity<List<Reservation>> getAll() {
         log.debug("GET /api/reservations - listando reservas");
@@ -34,6 +39,8 @@ public class ReservationController {
     }
 
     
+    @Operation(summary = "Listar reservas por usuario")
+    @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Reservation>> getByUser(@PathVariable Long userId) {
         log.debug("GET /api/reservations/user/{}", userId);
@@ -41,6 +48,12 @@ public class ReservationController {
     }
 
     
+    @Operation(summary = "Crear reserva")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Reserva creada"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+            @ApiResponse(responseCode = "422", description = "Usuario inexistente o regla de negocio incumplida")
+    })
     @PostMapping
     public ResponseEntity<Reservation> create(@Valid @RequestBody Reservation reservation) {
         log.info("POST /api/reservations - userId={}, packageId={}",
@@ -50,6 +63,11 @@ public class ReservationController {
     }
 
     
+    @Operation(summary = "Eliminar reserva")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Reserva eliminada"),
+            @ApiResponse(responseCode = "404", description = "Reserva no encontrada")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.info("DELETE /api/reservations/{}", id);

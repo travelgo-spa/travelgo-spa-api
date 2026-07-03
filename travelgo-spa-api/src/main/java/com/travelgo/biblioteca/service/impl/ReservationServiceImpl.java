@@ -54,9 +54,17 @@ public class ReservationServiceImpl implements ReservationService {
         log.debug("Verificando existencia de usuario id={} en user-service via Feign",
                 reservation.getUserId());
 
-        Boolean userExists = userServiceClient.checkUserExists(reservation.getUserId());
+        Boolean userExists;
+        try {
+            userExists = userServiceClient.checkUserExists(reservation.getUserId());
+        } catch (Exception ex) {
+            log.error("No se pudo validar el usuario id={} en user-service",
+                    reservation.getUserId(), ex);
+            throw new BusinessException(
+                    "No se pudo validar el usuario en el microservicio de usuarios. Intenta más tarde.");
+        }
 
-        if (Boolean.FALSE.equals(userExists)) {
+        if (!Boolean.TRUE.equals(userExists)) {
             log.warn("Reserva rechazada: usuario id={} no existe en user-service",
                     reservation.getUserId());
             throw new BusinessException(
