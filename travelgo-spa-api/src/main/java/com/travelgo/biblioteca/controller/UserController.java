@@ -1,22 +1,21 @@
-package com.travelgo.userservice.controller;
+package com.travelgo.biblioteca.controller;
 
-import com.travelgo.userservice.model.User;
-import com.travelgo.userservice.service.UserService;
+import com.travelgo.biblioteca.model.User;
+import com.travelgo.biblioteca.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "*")
-@Tag(name = "Usuarios", description = "Endpoints del microservicio de usuarios")
-
+@Tag(name = "Usuarios", description = "Gestión de usuarios del sistema")
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -36,18 +35,9 @@ public class UserController {
 
     
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable Integer id) {
+    public ResponseEntity<User> getById(@PathVariable Long id) {
         log.debug("GET /api/users/{}", id);
         return ResponseEntity.ok(service.findById(id));
-    }
-
-    
-    @GetMapping("/check/{id}")
-    public ResponseEntity<Boolean> checkExists(@PathVariable Integer id) {
-        log.debug("GET /api/users/check/{} - verificando existencia", id);
-        boolean exists = service.existsById(id);
-        log.info("Verificación de usuario id={}: existe={}", id, exists);
-        return ResponseEntity.ok(exists);
     }
 
     
@@ -60,7 +50,7 @@ public class UserController {
 
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.info("DELETE /api/users/{}", id);
         service.delete(id);
         return ResponseEntity.noContent().build(); // 204 No Content
