@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface UserServiceClient {
 
     /**
-     * Mapea a GET http://localhost:8082/api/users/check/{id}
+     * Mapea a GET {gateway}/api/users/check/{id}.
+     * La llamada pasa por el API Gateway (travelgo-gateway), que enruta
+     * /api/users/** hacia travelgo-user-service.
      *
      * @param id ID del usuario a verificar
      * @return true si existe, false si no

@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: travelgo-gateway
+  cloud:
+    gateway:
+      routes:
+        # Autenticación (login) -> travelgo-spa-api
+        - id: auth-service
+          uri: ${SPA_API_URL:http://localhost:8081}
+          predicates:
+            - Path=/auth/**
+
+        # Paquetes turísticos y reservas -> travelgo-spa-api
+        - id: packages-service
+          uri: ${SPA_API_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/packages/**
+
+        - id: reservations-service
+          uri: ${SPA_API_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/reservations/**
+
+        # Usuarios -> travelgo-user-service
+        - id: users-service
+          uri: ${USER_SERVICE_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/users/**
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,gateway
+  endpoint:
+    gateway:
+      enabled: true
+
+logging:
+  level:
+    com.travelgo: DEBUG
+    org.springframework.cloud.gateway: INFO
