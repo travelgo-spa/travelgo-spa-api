@@ -1,0 +1,99 @@
+version: "3.9"
+
+services:
+
+  travelgo-user-service:
+    build: ./travelgo-user-service
+    container_name: travelgo-user-service
+    ports:
+      - "8082:8082"
+
+  travelgo-spa-api:
+    build: ./travelgo-spa-api
+    container_name: travelgo-spa-api
+    ports:
+      - "8081:8081"
+    environment:
+      - GATEWAY_URL=http://travelgo-gateway:8080
+    depends_on:
+      - travelgo-user-service
+
+  travelgo-review-service:
+    build: ./travelgo-review-service
+    container_name: travelgo-review-service
+    ports:
+      - "8083:8083"
+    environment:
+      - GATEWAY_URL=http://travelgo-gateway:8080
+    depends_on:
+      - travelgo-spa-api
+
+  travelgo-destination-service:
+    build: ./travelgo-destination-service
+    container_name: travelgo-destination-service
+    ports:
+      - "8084:8084"
+
+  travelgo-wishlist-service:
+    build: ./travelgo-wishlist-service
+    container_name: travelgo-wishlist-service
+    ports:
+      - "8085:8085"
+    environment:
+      - GATEWAY_URL=http://travelgo-gateway:8080
+    depends_on:
+      - travelgo-spa-api
+
+  travelgo-payment-service:
+    build: ./travelgo-payment-service
+    container_name: travelgo-payment-service
+    ports:
+      - "8086:8086"
+    environment:
+      - GATEWAY_URL=http://travelgo-gateway:8080
+    depends_on:
+      - travelgo-spa-api
+
+  travelgo-notification-service:
+    build: ./travelgo-notification-service
+    container_name: travelgo-notification-service
+    ports:
+      - "8087:8087"
+
+  travelgo-promotion-service:
+    build: ./travelgo-promotion-service
+    container_name: travelgo-promotion-service
+    ports:
+      - "8088:8088"
+
+  travelgo-support-service:
+    build: ./travelgo-support-service
+    container_name: travelgo-support-service
+    ports:
+      - "8089:8089"
+
+  travelgo-gateway:
+    build: ./travelgo-gateway
+    container_name: travelgo-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SPA_API_URL=http://travelgo-spa-api:8081
+      - USER_SERVICE_URL=http://travelgo-user-service:8082
+      - REVIEW_SERVICE_URL=http://travelgo-review-service:8083
+      - DESTINATION_SERVICE_URL=http://travelgo-destination-service:8084
+      - WISHLIST_SERVICE_URL=http://travelgo-wishlist-service:8085
+      - PAYMENT_SERVICE_URL=http://travelgo-payment-service:8086
+      - NOTIFICATION_SERVICE_URL=http://travelgo-notification-service:8087
+      - PROMOTION_SERVICE_URL=http://travelgo-promotion-service:8088
+      - SUPPORT_SERVICE_URL=http://travelgo-support-service:8089
+    depends_on:
+      - travelgo-spa-api
+      - travelgo-user-service
+      - travelgo-review-service
+      - travelgo-destination-service
+      - travelgo-wishlist-service
+      - travelgo-payment-service
+      - travelgo-notification-service
+      - travelgo-promotion-service
+      - travelgo-support-service

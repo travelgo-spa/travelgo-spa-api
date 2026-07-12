@@ -44,7 +44,12 @@ class ReservationControllerTest {
     }
 
     private Reservation buildReservation() {
-        return new Reservation(1L, 10L, 20L, "2026-08-01");
+        Reservation r = new Reservation();
+        r.setId(1L);
+        r.setUserId(10L);
+        r.setPackageId(20L);
+        r.setDate("2026-08-01");
+        return r;
     }
 
     @Test
@@ -79,7 +84,8 @@ class ReservationControllerTest {
 
     @Test
     void create_conDatosInvalidos_retorna400() throws Exception {
-        Reservation invalido = new Reservation(null, null, null, "");
+        Reservation invalido = new Reservation();
+        invalido.setDate("");
 
         mockMvc.perform(post("/api/reservations")
                         .contentType(MediaType.APPLICATION_JSON)

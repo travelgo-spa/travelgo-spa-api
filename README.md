@@ -25,3 +25,11 @@ Todo el tráfico externo debe pasar por el Gateway (`http://localhost:8080`); lo
 * `GET /api/reservations`, `GET /api/reservations/user/{userId}`, `POST /api/reservations`, `DELETE /api/reservations/{id}`.
 * `GET /api/users`, `GET /api/users/{id}`, `POST /api/users`, `DELETE /api/users/{id}`.
 * `GET /doc/swagger-ui.html`: documentación interactiva de `travelgo-spa-api`.
+
+## Levantar todo con Docker (alternativa recomendada)
+
+   Con Docker Desktop instalado, desde la raíz del repo:
+```powershell
+   docker compose up --build
+```
+   Esto compila y levanta los 10 microservicios juntos, en el orden correcto, sin necesidad de abrir 10 terminales a mano. El Gateway queda disponible en `http://localhost:8080`.

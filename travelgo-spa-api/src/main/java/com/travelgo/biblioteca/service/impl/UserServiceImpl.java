@@ -47,6 +47,11 @@ public class UserServiceImpl implements UserService {
     public User create(User user) {
         log.info("Creando usuario: '{}'", user.getUsername());
 
+        // Regla de negocio: el username no puede estar duplicado
+        if (repo.existsByUsername(user.getUsername())) {
+            throw new BusinessException("Ya existe un usuario con el username: " + user.getUsername());
+        }
+
         // Regla de negocio: el email no puede estar duplicado
         if (repo.existsByEmail(user.getEmail())) {
             throw new BusinessException("Ya existe un usuario con el email: " + user.getEmail());

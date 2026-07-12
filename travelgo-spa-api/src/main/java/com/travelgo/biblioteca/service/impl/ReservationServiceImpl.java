@@ -4,7 +4,9 @@ import com.travelgo.biblioteca.Client.UserServiceClient;
 import com.travelgo.biblioteca.exception.BusinessException;
 import com.travelgo.biblioteca.exception.NotFoundException;
 import com.travelgo.biblioteca.model.Reservation;
+import com.travelgo.biblioteca.model.TravelPackage;
 import com.travelgo.biblioteca.repository.ReservationRepository;
+import com.travelgo.biblioteca.repository.TravelPackageRepository;
 import com.travelgo.biblioteca.service.ReservationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +23,14 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository repo;
     private final UserServiceClient userServiceClient;
+    private final TravelPackageRepository travelPackageRepository;
 
     public ReservationServiceImpl(ReservationRepository repo,
-                                  UserServiceClient userServiceClient) {
+                                  UserServiceClient userServiceClient,
+                                  TravelPackageRepository travelPackageRepository) {
         this.repo = repo;
         this.userServiceClient = userServiceClient;
+        this.travelPackageRepository = travelPackageRepository;
     }
 
     @Override
@@ -47,9 +52,22 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation create(Reservation reservation) {
+        Long packageId = reservation.getPackageId();
         log.info("Intentando crear reserva para userId={}, packageId={}",
-                reservation.getUserId(), reservation.getPackageId());
+                reservation.getUserId(), packageId);
 
+        // Regla de negocio: el paquete de viaje debe existir de verdad.
+        // Esto es lo que hace real la relación @ManyToOne -- en vez de
+        // confiar ciegamente en el número que manda el cliente, se busca
+        // el TravelPackage real en la base de datos y se reemplaza la
+        // referencia "shell" que había armado el setPackageId().
+        TravelPackage travelPackage = travelPackageRepository.findById(packageId)
+                .orElseThrow(() -> {
+                    log.warn("Reserva rechazada: el paquete id={} no existe", packageId);
+                    return new NotFoundException(
+                            "El paquete de viaje con id " + packageId + " no existe.");
+                });
+        reservation.setTravelPackage(travelPackage);
 
         log.debug("Verificando existencia de usuario id={} en user-service via Feign",
                 reservation.getUserId());

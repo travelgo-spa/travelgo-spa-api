@@ -27,6 +27,48 @@ spring:
           predicates:
             - Path=/api/users/**
 
+        # Reseñas -> travelgo-review-service
+        - id: reviews-service
+          uri: ${REVIEW_SERVICE_URL:http://localhost:8083}
+          predicates:
+            - Path=/api/reviews/**
+
+        # Destinos -> travelgo-destination-service
+        - id: destinations-service
+          uri: ${DESTINATION_SERVICE_URL:http://localhost:8084}
+          predicates:
+            - Path=/api/destinations/**
+
+        # Wishlist -> travelgo-wishlist-service
+        - id: wishlist-service
+          uri: ${WISHLIST_SERVICE_URL:http://localhost:8085}
+          predicates:
+            - Path=/api/wishlist/**
+
+        # Pagos -> travelgo-payment-service
+        - id: payments-service
+          uri: ${PAYMENT_SERVICE_URL:http://localhost:8086}
+          predicates:
+            - Path=/api/payments/**
+
+        # Notificaciones -> travelgo-notification-service
+        - id: notifications-service
+          uri: ${NOTIFICATION_SERVICE_URL:http://localhost:8087}
+          predicates:
+            - Path=/api/notifications/**
+
+        # Promociones -> travelgo-promotion-service
+        - id: promotions-service
+          uri: ${PROMOTION_SERVICE_URL:http://localhost:8088}
+          predicates:
+            - Path=/api/promotions/**
+
+        # Soporte -> travelgo-support-service
+        - id: support-service
+          uri: ${SUPPORT_SERVICE_URL:http://localhost:8089}
+          predicates:
+            - Path=/api/support-tickets/**
+
 server:
   port: 8080
 

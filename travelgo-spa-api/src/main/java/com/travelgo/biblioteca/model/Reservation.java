@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
- 
+
 @Entity
 @Table(name = "reservation")
 @Data
@@ -30,14 +30,30 @@ public class Reservation {
     @JdbcTypeCode(SqlTypes.INTEGER)
     private Long userId;
 
-    @NotNull(message = "El ID del paquete es obligatorio")
-    @Positive(message = "El ID del paquete debe ser un número positivo")
-    @Column(name = "package_id", columnDefinition = "INTEGER")
-    @JdbcTypeCode(SqlTypes.INTEGER)
-    private Long packageId;
+    // ---------- Relación JPA real hacia TravelPackage ----------
+    // Antes: private Long packageId;
+    // Ahora: una relación @ManyToOne de verdad, apuntando a la misma tabla de TravelPackage
+    @NotNull(message = "El paquete de viaje es obligatorio")
+    @ManyToOne
+    @JoinColumn(name = "package_id", referencedColumnName = "id")
+    private TravelPackage travelPackage;
 
     @NotBlank(message = "La fecha de la reserva es obligatoria")
     @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}",
              message = "La fecha debe tener formato YYYY-MM-DD")
     private String date;
+
+    public Long getPackageId() {
+        return travelPackage != null ? travelPackage.getId() : null;
+    }
+
+    public void setPackageId(Long packageId) {
+        if (packageId == null) {
+            this.travelPackage = null;
+            return;
+        }
+        TravelPackage ref = new TravelPackage();
+        ref.setId(packageId);
+        this.travelPackage = ref;
+    }
 }

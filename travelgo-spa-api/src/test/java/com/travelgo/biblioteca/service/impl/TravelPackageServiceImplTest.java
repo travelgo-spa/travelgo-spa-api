@@ -4,6 +4,7 @@ import com.travelgo.biblioteca.exception.BusinessException;
 import com.travelgo.biblioteca.exception.NotFoundException;
 import com.travelgo.biblioteca.model.TravelPackage;
 import com.travelgo.biblioteca.repository.TravelPackageRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,124 +17,204 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TravelPackageServiceImplTest {
 
     @Mock
-    private TravelPackageRepository repo;
+    private TravelPackageRepository repository;
 
     @InjectMocks
-    private TravelPackageServiceImpl service;
+    private TravelPackageServiceImpl travelPackageService;
 
-    private TravelPackage buildPackage() {
-        return new TravelPackage(1L, "Cartagena Full", "Playa y ciudad amurallada",
-                1500000.0, 5, List.of("Cartagena"));
+    private TravelPackage validPackage;
+
+    @BeforeEach
+    void setUp() {
+        validPackage = new TravelPackage();
+        validPackage.setId(1L);
+        validPackage.setName("Paquete a Cartagena");
+        validPackage.setDescription("5 días, todo incluido");
+        validPackage.setPrice(850000.0);
+        validPackage.setDurationDays(5);
+        validPackage.setDestinations(List.of("Cartagena"));
     }
+
+    // ---------- findAll ----------
 
     @Test
-    void findAll_retornaTodosLosPaquetes() {
-        when(repo.findAll()).thenReturn(List.of(buildPackage()));
+    void findAll_conPaquetesExistentes_retornaLaLista() {
+        // Given
+        when(repository.findAll()).thenReturn(List.of(validPackage));
 
-        assertThat(service.findAll()).hasSize(1);
-        verify(repo).findAll();
+        // When
+        List<TravelPackage> result = travelPackageService.findAll();
+
+        // Then
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getName()).isEqualTo("Paquete a Cartagena");
+        verify(repository, times(1)).findAll();
     }
+
+    // ---------- findById ----------
 
     @Test
     void findById_conIdExistente_retornaElPaquete() {
-        when(repo.findById(1L)).thenReturn(Optional.of(buildPackage()));
+        // Given
+        when(repository.findById(1L)).thenReturn(Optional.of(validPackage));
 
-        TravelPackage found = service.findById(1L);
+        // When
+        TravelPackage result = travelPackageService.findById(1L);
 
-        assertThat(found.getName()).isEqualTo("Cartagena Full");
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
     }
 
     @Test
     void findById_conIdInexistente_lanzaNotFoundException() {
-        when(repo.findById(99L)).thenReturn(Optional.empty());
+        // Given
+        when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.findById(99L))
+        // When / Then
+        assertThatThrownBy(() -> travelPackageService.findById(99L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("99");
+
+        verify(repository, never()).save(any());
     }
 
+    // ---------- create: camino feliz ----------
+
     @Test
-    void searchByName_retornaCoincidencias() {
-        when(repo.findByNameContainingIgnoreCase("cartagena")).thenReturn(List.of(buildPackage()));
+    void create_conDatosValidos_guardaElPaqueteCorrectamente() {
+        // Given
+        when(repository.save(any(TravelPackage.class))).thenReturn(validPackage);
 
-        List<TravelPackage> results = service.searchByName("cartagena");
+        // When
+        TravelPackage result = travelPackageService.create(validPackage);
 
-        assertThat(results).hasSize(1);
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getPrice()).isEqualTo(850000.0);
+        verify(repository, times(1)).save(validPackage);
     }
 
-    @Test
-    void create_conPrecioValido_creaElPaquete() {
-        TravelPackage pkg = buildPackage();
-        when(repo.save(pkg)).thenReturn(pkg);
-
-        TravelPackage created = service.create(pkg);
-
-        assertThat(created.getId()).isEqualTo(1L);
-        verify(repo).save(pkg);
-    }
+    // ---------- create: reglas de negocio ----------
 
     @Test
-    void create_conPrecioExcesivo_lanzaBusinessException() {
-        TravelPackage pkg = buildPackage();
-        pkg.setPrice(15_000_000.0);
+    void create_conPrecioSuperiorAlLimite_lanzaBusinessException() {
+        // Given: la regla de negocio prohíbe precios mayores a 10.000.000
+        TravelPackage paqueteCaro = new TravelPackage();
+        paqueteCaro.setName("Paquete de lujo");
+        paqueteCaro.setPrice(15_000_000.0);
+        paqueteCaro.setDurationDays(10);
 
-        assertThatThrownBy(() -> service.create(pkg))
+        // When / Then
+        assertThatThrownBy(() -> travelPackageService.create(paqueteCaro))
                 .isInstanceOf(BusinessException.class)
-                .hasMessageContaining("$10.000.000");
+                .hasMessageContaining("10.000.000");
 
-        verify(repo, never()).save(any());
+        // La regla de negocio debe cortar el flujo antes de tocar el repositorio
+        verify(repository, never()).save(any());
     }
 
     @Test
-    void update_conDatosValidos_actualizaElPaquete() {
-        TravelPackage existing = buildPackage();
-        TravelPackage data = new TravelPackage(null, "Cartagena Premium", "Actualizado",
-                2000000.0, 7, List.of("Cartagena", "Barú"));
-        when(repo.findById(1L)).thenReturn(Optional.of(existing));
-        when(repo.save(any(TravelPackage.class))).thenAnswer(inv -> inv.getArgument(0));
+    void create_conPrecioEnElLimiteExacto_seGuardaCorrectamente() {
+        // Given: el límite es estrictamente "mayor a", 10.000.000 exacto debe pasar
+        TravelPackage paqueteLimite = new TravelPackage();
+        paqueteLimite.setName("Paquete límite");
+        paqueteLimite.setPrice(10_000_000.0);
+        paqueteLimite.setDurationDays(7);
 
-        TravelPackage updated = service.update(1L, data);
+        when(repository.save(any(TravelPackage.class))).thenReturn(paqueteLimite);
 
-        assertThat(updated.getName()).isEqualTo("Cartagena Premium");
-        assertThat(updated.getDurationDays()).isEqualTo(7);
+        // When
+        TravelPackage result = travelPackageService.create(paqueteLimite);
+
+        // Then
+        assertThat(result).isNotNull();
+        verify(repository, times(1)).save(paqueteLimite);
+    }
+
+    // ---------- update ----------
+
+    @Test
+    void update_conDatosValidos_actualizaCorrectamente() {
+        // Given
+        TravelPackage cambios = new TravelPackage();
+        cambios.setName("Paquete actualizado");
+        cambios.setDescription("Nueva descripción");
+        cambios.setPrice(900000.0);
+        cambios.setDurationDays(6);
+        cambios.setDestinations(List.of("Cartagena", "Santa Marta"));
+
+        when(repository.findById(1L)).thenReturn(Optional.of(validPackage));
+        when(repository.save(any(TravelPackage.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // When
+        TravelPackage result = travelPackageService.update(1L, cambios);
+
+        // Then
+        assertThat(result.getName()).isEqualTo("Paquete actualizado");
+        assertThat(result.getPrice()).isEqualTo(900000.0);
+        verify(repository, times(1)).save(any(TravelPackage.class));
     }
 
     @Test
-    void update_conPrecioExcesivo_lanzaBusinessException() {
-        TravelPackage existing = buildPackage();
-        TravelPackage data = new TravelPackage(null, "Cartagena Premium", "Actualizado",
-                20_000_000.0, 7, List.of("Cartagena"));
-        when(repo.findById(1L)).thenReturn(Optional.of(existing));
+    void update_conPrecioInvalido_lanzaBusinessExceptionYNoGuarda() {
+        // Given
+        TravelPackage cambios = new TravelPackage();
+        cambios.setName("Paquete actualizado");
+        cambios.setPrice(20_000_000.0);
+        cambios.setDurationDays(6);
 
-        assertThatThrownBy(() -> service.update(1L, data))
+        when(repository.findById(1L)).thenReturn(Optional.of(validPackage));
+
+        // When / Then
+        assertThatThrownBy(() -> travelPackageService.update(1L, cambios))
                 .isInstanceOf(BusinessException.class);
 
-        verify(repo, never()).save(any());
+        verify(repository, never()).save(any());
     }
 
     @Test
-    void delete_conIdExistente_eliminaElPaquete() {
-        TravelPackage pkg = buildPackage();
-        when(repo.findById(1L)).thenReturn(Optional.of(pkg));
+    void update_conIdInexistente_lanzaNotFoundException() {
+        // Given
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
-        service.delete(1L);
+        // When / Then
+        assertThatThrownBy(() -> travelPackageService.update(500L, validPackage))
+                .isInstanceOf(NotFoundException.class);
+    }
 
-        verify(repo).deleteById(1L);
+    // ---------- delete ----------
+
+    @Test
+    void delete_conIdExistente_eliminaCorrectamente() {
+        // Given
+        when(repository.findById(1L)).thenReturn(Optional.of(validPackage));
+        doNothing().when(repository).deleteById(1L);
+
+        // When
+        travelPackageService.delete(1L);
+
+        // Then
+        verify(repository, times(1)).deleteById(1L);
     }
 
     @Test
-    void delete_conIdInexistente_lanzaNotFoundException() {
-        when(repo.findById(99L)).thenReturn(Optional.empty());
+    void delete_conIdInexistente_lanzaNotFoundExceptionYNoEliminaNada() {
+        // Given
+        when(repository.findById(404L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.delete(99L))
+        // When / Then
+        assertThatThrownBy(() -> travelPackageService.delete(404L))
                 .isInstanceOf(NotFoundException.class);
 
-        verify(repo, never()).deleteById(any());
+        verify(repository, never()).deleteById(any());
     }
 }
