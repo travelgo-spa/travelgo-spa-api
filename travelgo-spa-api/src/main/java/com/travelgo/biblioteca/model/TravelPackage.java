@@ -1,10 +1,13 @@
 package com.travelgo.biblioteca.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -44,4 +47,20 @@ public class TravelPackage {
                      joinColumns = @JoinColumn(name = "travel_package_id"))
     @Column(name = "destinations")
     private List<String> destinations;
+
+    // ---------- Lado inverso de la relación (@OneToMany) ----------
+    // Reservation ya tiene el lado @ManyToOne (dueño de la relación, con la FK).
+    // Este es el lado "muchos", solo de lectura: permite navegar desde un
+    // paquete hacia todas sus reservas, sin agregar una columna nueva
+    // (mappedBy indica que la FK ya vive en la tabla Reservation).
+    //
+    // @JsonIgnore: evita que Jackson entre en un ciclo infinito al serializar
+    // (Reservation ya incluye su TravelPackage completo en el JSON).
+    // @ToString.Exclude / @EqualsAndHashCode.Exclude: por la misma razón,
+    // pero para los metodos que genera Lombok con @Data.
+    @OneToMany(mappedBy = "travelPackage", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Reservation> reservations;
 }

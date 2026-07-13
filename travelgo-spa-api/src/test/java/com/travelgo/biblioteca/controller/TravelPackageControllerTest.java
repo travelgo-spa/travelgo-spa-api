@@ -44,8 +44,14 @@ class TravelPackageControllerTest {
     }
 
     private TravelPackage buildPackage() {
-        return new TravelPackage(1L, "Cartagena Full", "Playa y ciudad amurallada",
-                1500000.0, 5, List.of("Cartagena"));
+        TravelPackage tp = new TravelPackage();
+        tp.setId(1L);
+        tp.setName("Cartagena Full");
+        tp.setDescription("Playa y ciudad amurallada");
+        tp.setPrice(1500000.0);
+        tp.setDurationDays(5);
+        tp.setDestinations(List.of("Cartagena"));
+        return tp;
     }
 
     @Test
@@ -97,7 +103,12 @@ class TravelPackageControllerTest {
 
     @Test
     void create_conNombreVacio_retorna400() throws Exception {
-        TravelPackage invalido = new TravelPackage(null, "", "desc", 100.0, 3, List.of("X"));
+        TravelPackage invalido = new TravelPackage();
+        invalido.setName("");
+        invalido.setDescription("desc");
+        invalido.setPrice(100.0);
+        invalido.setDurationDays(3);
+        invalido.setDestinations(List.of("X"));
 
         mockMvc.perform(post("/api/packages")
                         .contentType(MediaType.APPLICATION_JSON)
